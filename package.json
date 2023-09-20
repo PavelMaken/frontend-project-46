@@ -10,6 +10,11 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "commander": "^11.0.0"
+    "commander": "^11.0.0",
+    "rpm": "^0.0.0",
+    "rpt": "^0.0.86"
+  },
+  "bin": {
+    "gendiff": "bin/gendiff.js"
   }
 }
