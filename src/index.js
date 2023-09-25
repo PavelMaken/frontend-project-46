@@ -1,6 +1,11 @@
 import { readFileSync } from 'node:fs';
 import _ from 'lodash';
-import { resolve } from 'node:path'    
+import path from 'node:path';
+  
+
+const resolvePath = (filePath) => (filePath.includes('__fixtures__')
+  ? path.resolve(process.cwd(), filePath)
+  : path.resolve(process.cwd(), `__fixtures__/${filePath}`));
 
 const gendiff = (filePath1, filePath2) => {
     const path1 = resolvePath(filePath1);
@@ -22,7 +27,7 @@ const gendiff = (filePath1, filePath2) => {
             result.push(` + ${key}: ${data2[key]}`)
         } else if (Object.hasOwn(data1, key) && Object.hasOwn(data2, key)) { 
             if (data1[key] === data2[key]) {
-                result.push(` - ${key}: ${data2[key]}`)
+                result.push(`   ${key}: ${data2[key]}`)
             } else if (data1[key] !== data2[key]) {
                 result.push(` - ${key}: ${data1[key]}`)
                 result.push(` + ${key}: ${data2[key]}`)
@@ -31,4 +36,6 @@ const gendiff = (filePath1, filePath2) => {
     }
     result.push('}');
     return result.join('\n');
-}   
+};
+
+export default gendiff;
