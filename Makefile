@@ -11,7 +11,7 @@ install-deps:
 	npm ci
 
 test:
-	npm test
+	npm test 
 
 test-coverage:
 	npx test -- --coverage
