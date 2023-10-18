@@ -2,43 +2,23 @@ import { readFileSync } from 'node:fs';
 import _ from 'lodash';
 import path from 'node:path';
 import parseFormat from './parsers.js';
+import getTree from './getTree.js';
+import formater from './format/index.js';
 
-const resolvePath = (filePath) => (filePath.includes('__fixtures__')
-  ? path.resolve(process.cwd(), filePath)
-  : path.resolve(process.cwd(), `__fixtures__/${filePath}`));
+const resolvePath = (filePath) => path.resolve(process.cwd(), filePath);
 
-const gendiff = (filePath1, filePath2) => {
-    const path1 = resolvePath(filePath1);
-    const path2 = resolvePath(filePath2)
+const getExtension = (filename) => path.extname(filename).slice(1);
 
-    const file1 = readFileSync(path1, 'utf-8');
-    const file2 = readFileSync(path2, 'utf-8');
-    
-    const formatFile1 = path.extname(path1).substring(1);
-    const formatFile2 = path.extname(path2).substring(1);
-  
-    const data1 = parseFormat(file1, formatFile1);
-    const data2 = parseFormat(file2, formatFile2);
+const getData = (filePath) => parseFormat(readFileSync(filePath, 'utf-8'), getExtension(filePath));
 
-    const keys = _.union(Object.keys(data1), Object.keys(data2)).sort();
+const gendiff = (filePath1, filePath2, format = 'stylish') => {
+  const path1 = resolvePath(filePath1);
+  const path2 = resolvePath(filePath2);
 
-    const result = ['{'];
-    for (const key of keys){
-        if (Object.hasOwn(data1, key) && !Object.hasOwn(data2, key)) {
-            result.push(` - ${key}: ${data1[key]}`)
-        } else if (!Object.hasOwn(data1, key) && Object.hasOwn(data2, key)) {
-            result.push(` + ${key}: ${data2[key]}`)
-        } else if (Object.hasOwn(data1, key) && Object.hasOwn(data2, key)) { 
-            if (data1[key] === data2[key]) {
-                result.push(`   ${key}: ${data2[key]}`)
-            } else if (data1[key] !== data2[key]) {
-                result.push(` - ${key}: ${data1[key]}`)
-                result.push(` + ${key}: ${data2[key]}`)
-            }
-        }
-    }
-    result.push('}');
-    return result.join('\n');
+  const data1 = getData(path1);
+  const data2 = getData(path2);
+
+  return formater(getTree(data1, data2), format);
 };
 
 export default gendiff;

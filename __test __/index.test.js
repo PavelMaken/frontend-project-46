@@ -3,7 +3,7 @@ import { test, expect } from '@jest/globals';
 import { dirname } from 'node:path';
 import fs from 'fs';
 import path from 'path';
-import gendiff from '../src/index.js';
+import parsers from '../src/parsers';
 
 const fileName = url.fileURLToPath(import.meta.url);
 const __dirname = dirname(fileName);
@@ -12,22 +12,20 @@ const getFixPath = (nameFile) => path.join(__dirname, '..', '__fixtures__', name
 const readFile = (nameFile) => fs.readFileSync(getFixPath(nameFile), 'utf-8');
 
 const testDefaultJSON = readFile('OutputTest1JSON.txt');
-const testDefaultYML = readFile('OutputTest1YML.txt');
-//const testPlain = readFile('OutputTestPlain.txt');
-//const testJSON = readFile('OutputTestJson.txt');
+const testParsers = readFile('OutputTestParsers.txt');
 
-const file1JSON = './__fixtures__/file1.json';
-const file2JSON = './__fixtures__/file2.json';
-
-const file1YML = './__fixtures__/file1.yml';
-const file2YML = './__fixtures__/file2.yml';
-
+const file1 = JSON.parse(readFile('file1.json'));
+const file2 = JSON.parse(readFile('file2.json'));
 
 
 test('json', () => {
-    expect(gendiff(file1JSON , file2JSON)).toEqual(testDefaultJSON);
+    parser(file1, file2) === testDefaultJSON;
 });
 
-test('yml', () => {
-    expect(gendiff(file1YML , file2YML)).toEqual(testDefaultYML);
+test('empty json', () => {
+    expect(parser()).toEqual('');
+});
+
+test('test parser', () => {
+    parser(file1) === testParsers;
 });
