@@ -19,13 +19,13 @@ const file2 = JSON.parse(readFile('file2.json'));
 
 
 test('json', () => {
-    parser(file1, file2) === testDefaultJSON;
+    parsers(file1, file2) === testDefaultJSON;
 });
 
 test('empty json', () => {
-    expect(parser()).toEqual('');
+    expect(parsers()).toEqual('');
 });
 
 test('test parser', () => {
-    parser(file1) === testParsers;
+    parsers(file1) === testParsers;  
 });
